@@ -1,10 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-type Callback = (...args :unknown[])=>void
+type Callback = (...args: unknown[]) => void
 
-const debounce = <T extends Callback>(cb:T, delay:number) => {
-  let timeout : ReturnType<typeof setTimeout> | null;
-  return (...args:Parameters<T>) => {
+const debounce = <T extends Callback>(cb: T, delay: number) => {
+  let timeout: ReturnType<typeof setTimeout> | null;
+  return (...args: Parameters<T>) => {
     if (timeout) clearTimeout(timeout);
     timeout = setTimeout(() => {
       cb(...args);
@@ -13,18 +13,20 @@ const debounce = <T extends Callback>(cb:T, delay:number) => {
   };
 };
 
-const throttle = <T extends Callback>(cb:T, timelimit:number)=>{
-    let inThrottle = false;
-    return (...args:Parameters<T>)=>{
-      if(!inThrottle){
-        inThrottle = true;
-        setTimeout(() => {
-          inThrottle = false;
-        }, timelimit);
-        cb(...args);
-      }
+const throttle = <T extends Callback>(cb: T, timelimit: number) => {
+  let inThrottle = false;
+  return (...args: Parameters<T>) => {
+    if (!inThrottle) {
+      inThrottle = true;
+      setTimeout(() => {
+        inThrottle = false;
+      }, timelimit);
+      cb(...args);
     }
+  }
 }
+
+
 
 /**
  * A custom hook that returns a debounced version of the provided callback function.
@@ -35,10 +37,28 @@ const throttle = <T extends Callback>(cb:T, timelimit:number)=>{
  * @param delay - The delay in milliseconds.
  * @returns A debounced version of the callback function.
  */
-export const useDebounce = (callback:Callback, delay:number=300) => useCallback(debounce(callback, delay), [callback, delay]);
+export const useDebounce = (callback: Callback, delay: number = 300) => useCallback(debounce(callback, delay), [callback, delay]);
 
 
+export const useThrottle = (callback: Callback, timeLimit: number = 300) => useCallback(throttle(callback, timeLimit), [callback, timeLimit]);
 
-export const useThrottle = (callback:Callback, timeLimit:number=300) => useCallback(throttle(callback, timeLimit), [callback, timeLimit]);
 
+export const useIsMobileView = (threshold: number = 800) => {
+  const [isMobile, setIsMobile] = useState(window.outerWidth < threshold)
+  console.log("");
+  
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width:${threshold}px`)
+    setIsMobile(mq.matches);
+
+    const handleResize = (e:MediaQueryListEvent) => {      
+      setIsMobile(e.matches)
+    }
+    mq.addEventListener('change', handleResize)
+    return ()=> mq.removeEventListener('change', handleResize)
+  }, [threshold])
+
+  return isMobile
+}
 

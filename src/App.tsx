@@ -12,6 +12,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import logo from '../public/logo.png'
 import w2 from './assets/w2.png'
 import w3 from './assets/w3.png'
+import { useIsMobileView } from "./Hooks.tsx";
 
 
 
@@ -83,6 +84,10 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<string | null>(null);
   const [totalResults, setTotalResults] = useState<number>(0)
+  const isMobileView = useIsMobileView()
+
+  
+  
 
 
   const handleMovieSelection = (id: string) => {
@@ -114,9 +119,11 @@ function App() {
     localStorage.setItem('watched', JSON.stringify(watched))
   }, [watched])
 
-
+  
 
   return (
+    isMobileView? 
+    <MobileWarning/>:
     <>
       <NavBar>
         <Search {...{ setMovies, setError, setLoading, setTotalResults }} />
@@ -152,6 +159,16 @@ function App() {
   );
 }
 
+
+const MobileWarning =()=>{
+  return <div className=".overlay">
+    <div className="modal">
+      <h1 style={{fontSize:'5vw'}}>Destop Mode Required</h1>
+      <p style={{fontSize:'3vw'}}>Please open this app on a desktop device or request desktop view through your browser settings.</p>
+    </div>
+  </div>
+}
+
 function NavBar({ children }: { children: React.ReactNode }) {
   return (
     <nav className="nav-bar">
@@ -164,7 +181,7 @@ function NavBar({ children }: { children: React.ReactNode }) {
 function Logo() {
   return (
     <div className="logo" >
-      <span role="img"><img src={logo} width="40vw" alt="" /></span>
+      <span role="img"><img src={logo} width="40vw" alt="" draggable="false" onContextMenu={e=>e.preventDefault()} /></span>
       <h1 >FlickyPedia</h1>
     </div>
   );
@@ -218,7 +235,6 @@ function MovieDetails({ selectedMovie, closeMovie, addToWatched, watchedMovieRat
 
   const handleSubmit = () => {
     if (watchedMovieRating) {
-      console.log(userRating);
       editWatchedRating(userRating)
     }
     else if (!watchedMovieRating) {
@@ -299,7 +315,7 @@ function MovieDetails({ selectedMovie, closeMovie, addToWatched, watchedMovieRat
               <button className="btn-back" onClick={closeMovie}>
                 &larr;
               </button>
-              <img src={Poster} alt={`Poster of ${Title} movie`} />
+              <img src={Poster} alt={`Poster of ${Title} movie`}  draggable="false" onContextMenu={e=>e.preventDefault()} />
               <div className="details-overview">
                 <h2>{Title}</h2>
                 <p>
@@ -399,8 +415,6 @@ function Search({ setMovies, setError, setLoading, setTotalResults }:
   // effect to fetch results
   useEffect(() => {
     let timeout: number = 0;
-    // console.log("d",date?.year()== dayjs().year());
-    console.log("date", date, date?.year());
 
 
     async function fetchMovies() {
@@ -408,8 +422,7 @@ function Search({ setMovies, setError, setLoading, setTotalResults }:
       const yearParam = date instanceof dayjs ? `y=${date.year()}` : "";
       const pageParam = page && `page=${page}`
       const url = `https://www.omdbapi.com/?apikey=${MYKEY}&${queryParam}&${yearParam}&${pageParam}`
-      console.log(url, date?.year());
-      console.log(query, queryParam);
+     
 
 
       try {
@@ -547,7 +560,7 @@ function Search({ setMovies, setError, setLoading, setTotalResults }:
 
       <div className="tooltip-container">
         <button className="btn-search tooltip-sibling" onClick={() => setWordMatch(w => !w)}>
-          <img className="searchIcon" src={`${wordMatch ? w2 : w3}`} alt="word-match-icon" />
+          <img className="searchIcon" src={`${wordMatch ? w2 : w3}`} alt="word-match-icon"  draggable="false" onContextMenu={e=>e.preventDefault()} />
         </button>
         <div className="tooltip">Match Whole Word</div>
       </div>
@@ -600,7 +613,7 @@ function MovieList({ movies, selectMovie }: { movies: Movie[], selectMovie: (id:
 function Movie({ movie, selectMovie }: { movie: Movie, selectMovie: () => void }) {
   return (
     <li onClick={selectMovie} >
-      <img src={movie.Poster} alt={`${movie.Title} poster`} />
+      <img src={movie.Poster} alt={`${movie.Title} poster`}  draggable="false" onContextMenu={e=>e.preventDefault()} />
       <h3>{movie.Title}</h3>
       <div>
         <p>
@@ -660,7 +673,7 @@ function WatchedMovie({ movie, deleteFromWatched, selectMovie }: { movie: Watche
 
   return (
     <li onDoubleClick={() => selectMovie(movie.imdbID)} className="tooltip-container">
-      <img src={movie.Poster} alt={`${movie.Title} poster`} className="tooltip-sibling" />
+      <img src={movie.Poster} alt={`${movie.Title} poster`} className="tooltip-sibling"  draggable="false" onContextMenu={e=>e.preventDefault()} />
       <div className="tooltip">Double-click To Open</div>
       <h3>{movie.Title}</h3>
 
