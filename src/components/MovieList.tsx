@@ -1,4 +1,3 @@
-// import {Movie} from "./Movie";
 import logo from '../../public/logo.png'
 import type { Movie } from "../interfaces";
 

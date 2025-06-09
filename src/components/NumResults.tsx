@@ -1,4 +1,3 @@
-import React from "react";
 
 export function NumResults({ length }: { length: number; }) {
   return (
