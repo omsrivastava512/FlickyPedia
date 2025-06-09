@@ -93,8 +93,9 @@ export default function Search({ setMovies, setError, setLoading, setTotalResult
                 if (!res.ok) throw new Error("Cound not fetch movies.")
                 const data = await res.json();
                 if (data.Response == 'False') throw new Error(data.Error);
-                setMovies(wordMatch ? [data] : data.Search);
-                setTotalResults(Number(data?.totalResults) || 0)
+                const searcResult = wordMatch ? [data] : data.Search
+                setMovies(searcResult);                           
+                setTotalResults(Number(data?.totalResults) || searcResult.length || 0)
             } catch (e) {
                 console.log(e);
                 setError(e instanceof Error ? e?.message : "An unknown error occurred.")
