@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "src/TextExpander.tsx", "../Mini/App-v3.js"]
+  "include": ["src", "src/components/TextExpander.tsx", "../Mini/App-v3.js"]
 }

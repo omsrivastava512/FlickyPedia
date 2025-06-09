@@ -41,7 +41,7 @@ const starStyle = {
 
 
 
-export const StarRating = (props: StarRatingProps) => {
+ const StarRating = (props: StarRatingProps) => {
   const [rating, setRating] = useState(0);
   const [ratingFinal, setRatingFinal] = useState(false);
 
@@ -147,3 +147,6 @@ const Star = ({
     ></span>
   );
 };
+
+
+export default StarRating
