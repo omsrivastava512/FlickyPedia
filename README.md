@@ -171,7 +171,6 @@ VITE_OMDB_API_KEY=your_omdb_api_key_here
 
 ```src/
 ├── App.tsx                # Main application component
-├── data.ts                # Static/mock data for the app
 ├── index.css              # Global styles
 ├── main.tsx               # Application entry point
 ├── types.tsx              # TypeScript types and interfaces
@@ -179,9 +178,7 @@ VITE_OMDB_API_KEY=your_omdb_api_key_here
 ├── assets/                # Static assets (icons, images)
 │   ├── react.svg
 │   ├── w2.png
-│   ├── w3.png
-│   ├── word-match.png
-│   └── word-word.png
+│   └── w3.png
 ├── components/            # All UI components
 │   ├── Box.tsx
 │   ├── ErrorMessage.tsx
@@ -201,9 +198,7 @@ VITE_OMDB_API_KEY=your_omdb_api_key_here
 │   └── ... (other hooks)
 
 public/
-├── clapper.png            # Additional public asset
 ├── logo.png               # Application logo
-├── popcorn.png            # Popcorn icon
 └── favicon files          # Browser icons (e.g., favicon.ico)
 ```
 
