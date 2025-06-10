@@ -67,7 +67,7 @@ function App() {
     <NoMobileView>
       <>
         <NavBar>
-          <Search {...{ setMovies, setError, setLoading, setTotalResults }} />
+          <Search {...{ setMovies, setError, setLoading, setTotalResults, totalResults }} />
           <NumResults length={totalResults} />
         </NavBar>
         <Main>

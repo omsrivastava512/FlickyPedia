@@ -27,7 +27,8 @@ interface SearchProps {
     setMovies: StateSetter<Movie[]>,
     setError: StateSetter<string>,
     setLoading: StateSetter<boolean>,
-    setTotalResults: StateSetter<number>
+    setTotalResults: StateSetter<number>,
+    totalResults: number
 }
 interface SearchInputProps {
     query: string,
@@ -53,6 +54,7 @@ interface WordMatchProps {
  * @param setError - State setter for error messages
  * @param setLoading - State setter for loading state
  * @param setTotalResults - State setter for total number of search results
+ * @param totalResults - total number of search results to derive max page
  * 
  * @remarks
  * - Automatically focuses search input when user types alphanumeric characters
@@ -61,21 +63,23 @@ interface WordMatchProps {
  * - Uses OMDB API with custom API key for movie data retrieval
  * - Implements Material-UI DatePicker with custom dark theme
  */
-export default function Search({ setMovies, setError, setLoading, setTotalResults }:
+export default function Search({ setMovies, setError, setLoading, setTotalResults, totalResults }:
     SearchProps) {
 
     const [query, setQuery] = useState("");
     const [wordMatch, setWordMatch] = useState(false)
-    const [page] = useState(1);
+    const [page, setPage] = useState(1);
     const [date, setDate] = useState<Dayjs | null>(null)
 
     const prevParams = useRef({ query, wordMatch, date, page })
+
+    const MAX_PAGE = Math.ceil(totalResults / 10);
+    const trimmedQuery = query.trim()
 
     // effect to fetch results
     useEffect(() => {
         const prev = prevParams.current;
         let timeout: number = 0;
-        const trimmedQuery = query.trim()
 
         async function fetchMovies() {
             const queryParam = (wordMatch ? 't=' : 's=') + trimmedQuery;
@@ -84,7 +88,6 @@ export default function Search({ setMovies, setError, setLoading, setTotalResult
             const url = `https://www.omdbapi.com/?apikey=${MYKEY}&${queryParam}&${yearParam}&${pageParam}`
 
             try {
-                console.log("fe");
                 const res = await fetch(url);
                 if (!res.ok) throw new Error("Cound not fetch movies.")
                 const data = await res.json();
@@ -100,8 +103,6 @@ export default function Search({ setMovies, setError, setLoading, setTotalResult
             }
         }
 
-
-
         const PARAMS_CHANGED = prev.query != trimmedQuery ||
             prev.date?.year?.() != (date?.year?.() ?? null) ||
             prev.wordMatch != wordMatch || prev.page != page;
@@ -109,13 +110,13 @@ export default function Search({ setMovies, setError, setLoading, setTotalResult
         const EMPTY_QUERY = trimmedQuery.length == 0;
         const QUERY_TOO_SHORT = (trimmedQuery.length < 3 && !wordMatch)
         const INVALID_YEAR = (date instanceof Object && (date.year() < 1900 || date.year?.() > dayjs().year()))
-       
+
         if (EMPTY_QUERY || QUERY_TOO_SHORT || INVALID_YEAR) {
             setError("Search a movie.");
             setMovies([]);
             setTotalResults(0)
         }
-        else if(PARAMS_CHANGED){  
+        else if (PARAMS_CHANGED) {
             setError("")
             setLoading(true);
             timeout = setTimeout(fetchMovies, 700);
@@ -124,8 +125,37 @@ export default function Search({ setMovies, setError, setLoading, setTotalResult
             prevParams.current = { query: trimmedQuery, wordMatch, date, page }
             clearTimeout(timeout)
         };
-    }, [query, setMovies, setError, setLoading, setTotalResults, wordMatch, date, page])
+    }, [trimmedQuery, setMovies, setError, setLoading, setTotalResults, wordMatch, date, page])
 
+    // handle page change
+    useEffect(() => {
+        const pageChange = (e: KeyboardEvent) => {
+
+            if (e.shiftKey && e.key === "ArrowRight") {
+                
+                if (document.activeElement instanceof HTMLElement) {
+                    document.activeElement.blur();
+                }
+                setPage(p => Math.min(MAX_PAGE, p + 1));
+            }
+            if (e.shiftKey && e.key === "ArrowLeft") {
+                if (document.activeElement instanceof HTMLElement) {
+                    document.activeElement.blur();
+                }
+                setPage(p => Math.max(1, p - 1));
+            }
+        }
+        document.addEventListener("keydown", pageChange)
+
+        return () => {
+            document.removeEventListener("keydown", pageChange)
+        }
+    }, [page, MAX_PAGE])
+
+    // reset page 
+    useEffect(() => {
+        setPage(1);
+    }, [trimmedQuery, wordMatch, date, MAX_PAGE])
 
     return (
         <div className="search">
@@ -144,14 +174,14 @@ const SearchInput = ({ query, setQuery }: SearchInputProps) => {
         const focusOnSearch = (e: KeyboardEvent) => {
             const active = document.activeElement;
 
-            const IS_EDITABLE =  (
-                    ((active as HTMLElement).isContentEditable ||
+            const IS_EDITABLE = (
+                ((active as HTMLElement).isContentEditable ||
                     ['INPUT', 'TEXTAREA', 'SELECT'].includes(active?.tagName || ""))
-                )
+            )
             if (
-                active && 
-                active !== searchBar.current 
-                && !IS_EDITABLE 
+                active &&
+                active !== searchBar.current
+                && !IS_EDITABLE
                 && /^[a-zA-Z0-9 ]$/.test(e.key)
             ) searchBar?.current?.focus();
 

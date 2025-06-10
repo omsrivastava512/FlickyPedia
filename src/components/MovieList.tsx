@@ -12,7 +12,12 @@ export function MovieList({ movies, selectMovie }: { movies: Movie[], selectMovi
           selectMovie={() => { selectMovie(movie.imdbID) }}
         />
       ))}
+      <div className="navigation-hint">
+        <p>💡 Use Shift + ← or → to navigate between pages</p>
+      </div>
+
     </ul>
+    
   );
 }
 
