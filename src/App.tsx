@@ -1,7 +1,7 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 
-import type { Movie, WatchedMovie } from "./interfaces.tsx";
+import type { Movie, WatchedMovie } from "./types.tsx";
 
 
 import  {
@@ -17,13 +17,14 @@ import  {
     MovieDetails,
     WatchedMoviesList
 } from "./components"
+import useLocalStorage from "./hooks/useLocalStorage.tsx";
 
 
 export default App;
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [watched, setWatched] = useState<WatchedMovie[]>(getWatchedMovies);
+  const [watched, setWatched] = useLocalStorage<WatchedMovie[]>([],'watched')
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<string | null>(null);
@@ -57,9 +58,7 @@ function App() {
     setSelectedMovie(null)
   }
 
-  useEffect(() => {
-    localStorage.setItem('watched', JSON.stringify(watched))
-  }, [watched])
+
 
 
 
@@ -108,20 +107,3 @@ function Main({ children }: { children: React.ReactNode }) {
 }
 
 
-
-const getLocalData = (key: string) => {
-  const storedValue = localStorage.getItem(key);
-  if (!storedValue) return null;
-  try {
-    return JSON.parse(storedValue);
-  } catch {
-    return null;
-  }
-}
-
-
-
-const getWatchedMovies = () => {
-  const value = getLocalData("watched");
-  return value || []
-}

@@ -1,4 +1,4 @@
-import type { WatchedMovie } from "../interfaces";
+import type { WatchedMovie } from "../types";
 
 const average = (arr: number[]) =>  parseFloat((arr.reduce((acc, cur) => acc + cur || acc, 0) / arr.length).toFixed(2)) || 0 as Readonly<number>;
 

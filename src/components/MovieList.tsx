@@ -1,5 +1,5 @@
 import logo from '../../public/logo.png'
-import type { Movie } from "../interfaces";
+import type { Movie } from "../types";
 
 
 export function MovieList({ movies, selectMovie }: { movies: Movie[], selectMovie: (id: string) => void }) {

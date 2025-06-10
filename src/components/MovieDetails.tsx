@@ -7,7 +7,7 @@ import { ErrorMessage } from "./ErrorMessage";
 
 import logo from "../../public/logo.png"
 
-import type { Movie, WatchedMovie } from "../interfaces";
+import type { Movie, WatchedMovie } from "../types";
 
 const MYKEY = import.meta.env.VITE_OMDB_API_KEY || "f84fc31d"
 

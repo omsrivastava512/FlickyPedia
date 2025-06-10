@@ -105,9 +105,11 @@ export default function Search({ setMovies, setError, setLoading, setTotalResult
         const PARAMS_CHANGED = prev.query != trimmedQuery ||
             prev.date?.year?.() != (date?.year?.() ?? null) ||
             prev.wordMatch != wordMatch || prev.page != page;
+
         const EMPTY_QUERY = trimmedQuery.length == 0;
         const QUERY_TOO_SHORT = (trimmedQuery.length < 3 && !wordMatch)
         const INVALID_YEAR = (date instanceof Object && (date.year() < 1900 || date.year?.() > dayjs().year()))
+       
         if (EMPTY_QUERY || QUERY_TOO_SHORT || INVALID_YEAR) {
             setError("Search a movie.");
             setMovies([]);

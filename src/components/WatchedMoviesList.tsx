@@ -1,4 +1,4 @@
-import type { WatchedMovie } from "../interfaces";
+import type { WatchedMovie } from "../types";
 
 import logo from '../../public/logo.png'
 
