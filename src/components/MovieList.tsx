@@ -13,7 +13,7 @@ export function MovieList({ movies, selectMovie }: { movies: Movie[], selectMovi
         />
       ))}
       <div className="navigation-hint">
-        <p>💡 Use Shift + ← or → to navigate between pages</p>
+        {movies.length>10 && <p>💡 Use Shift + ← or → to navigate between pages</p>}
       </div>
 
     </ul>
