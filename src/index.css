@@ -98,7 +98,8 @@ body {
 
 @media screen and (max-width: 913px) {
   .main {
-    align-items: start;
+    align-items: space-around;
+    gap: 2rem;
   }
 }
 
@@ -113,11 +114,13 @@ body {
 
 .box {
   width: 42rem;
-  height: 80vh;
+  max-height: 80vh;
+  @media screen and (max-width: 908px) {
+    max-height: 40vh;
+  }
   max-width: 42rem;
   background-color: var(--color-background-500);
   border: 2px solid var(--color-accent);
-  /* border-image: linear-gradient(to right, #3acfd5 0%, #3a4ed5 100%) 1; */
   border-radius: 0.9rem;
   overflow-y: scroll;
   position: relative;
