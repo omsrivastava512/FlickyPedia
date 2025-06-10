@@ -5,15 +5,13 @@ import dayjs, { Dayjs } from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
-import type { Movie } from '../interfaces';
+import type { Movie, StateSetter } from '../types';
 
 import w2 from '../assets/w2.png'
 import w3 from '../assets/w3.png'
 
 const MYKEY = import.meta.env.VITE_OMDB_API_KEY || "f84fc31d"
 
-// A utility type alias for setting state in React components.
-type StateSetter<T> = React.Dispatch<React.SetStateAction<T>>
 
 // To be used in Search bar to normalize repeated spaces
 function normalizeSpaces(input: string): string {
@@ -31,12 +29,12 @@ interface SearchProps {
     setLoading: StateSetter<boolean>,
     setTotalResults: StateSetter<number>
 }
-interface SearchInputProps{
+interface SearchInputProps {
     query: string,
     setQuery: StateSetter<string>
 }
-interface WordMatchProps{
-    wordMatch:boolean, 
+interface WordMatchProps {
+    wordMatch: boolean,
     setWordMatch: StateSetter<boolean>
 }
 
@@ -71,30 +69,28 @@ export default function Search({ setMovies, setError, setLoading, setTotalResult
     const [page] = useState(1);
     const [date, setDate] = useState<Dayjs | null>(null)
 
-
-
-   
+    const prevParams = useRef({ query, wordMatch, date, page })
 
     // effect to fetch results
     useEffect(() => {
+        const prev = prevParams.current;
         let timeout: number = 0;
-
+        const trimmedQuery = query.trim()
 
         async function fetchMovies() {
-            const queryParam = (wordMatch ? 't=' : 's=') + query.trim();
+            const queryParam = (wordMatch ? 't=' : 's=') + trimmedQuery;
             const yearParam = date instanceof dayjs ? `y=${date.year()}` : "";
             const pageParam = page && `page=${page}`
             const url = `https://www.omdbapi.com/?apikey=${MYKEY}&${queryParam}&${yearParam}&${pageParam}`
 
-
-
             try {
+                console.log("fe");
                 const res = await fetch(url);
                 if (!res.ok) throw new Error("Cound not fetch movies.")
                 const data = await res.json();
                 if (data.Response == 'False') throw new Error(data.Error);
                 const searcResult = wordMatch ? [data] : data.Search
-                setMovies(searcResult);                           
+                setMovies(searcResult);
                 setTotalResults(Number(data?.totalResults) || searcResult.length || 0)
             } catch (e) {
                 console.log(e);
@@ -103,49 +99,58 @@ export default function Search({ setMovies, setError, setLoading, setTotalResult
                 setLoading(false)
             }
         }
-        const EMPTYQUERY = query.trim().length == 0;
-        const QUERYTOOSHORT = (query.trim().length < 3 && !wordMatch)
-        const INVALIDYEAR = (date instanceof Object && (date.year() < 1900 || date.year() > dayjs().year()))
-        if (EMPTYQUERY || QUERYTOOSHORT || INVALIDYEAR) {
+
+
+
+        const PARAMS_CHANGED = prev.query != trimmedQuery ||
+            prev.date?.year?.() != (date?.year?.() ?? null) ||
+            prev.wordMatch != wordMatch || prev.page != page;
+        const EMPTY_QUERY = trimmedQuery.length == 0;
+        const QUERY_TOO_SHORT = (trimmedQuery.length < 3 && !wordMatch)
+        const INVALID_YEAR = (date instanceof Object && (date.year() < 1900 || date.year?.() > dayjs().year()))
+        if (EMPTY_QUERY || QUERY_TOO_SHORT || INVALID_YEAR) {
             setError("Search a movie.");
             setMovies([]);
             setTotalResults(0)
         }
-
-        else {
+        else if(PARAMS_CHANGED){  
             setError("")
             setLoading(true);
             timeout = setTimeout(fetchMovies, 700);
         }
         return () => {
+            prevParams.current = { query: trimmedQuery, wordMatch, date, page }
             clearTimeout(timeout)
         };
     }, [query, setMovies, setError, setLoading, setTotalResults, wordMatch, date, page])
 
 
-
-
     return (
         <div className="search">
-            <SearchInput {...{query, setQuery}}/>
+            <SearchInput {...{ query, setQuery }} />
             <YearPicker {...{ date, setDate }} />
-            <WordMatchButton {...{wordMatch, setWordMatch}}/>
+            <WordMatchButton {...{ wordMatch, setWordMatch }} />
         </div>
     );
 }
 
-const SearchInput = ({query, setQuery}: SearchInputProps) => {
+const SearchInput = ({ query, setQuery }: SearchInputProps) => {
     const searchBar = useRef<HTMLInputElement>(null)
 
-     // effect to capture keydown
+    // effect to capture keydown
     useEffect(() => {
         const focusOnSearch = (e: KeyboardEvent) => {
             const active = document.activeElement;
 
-            if (/^[a-zA-Z0-9 ]$/.test(e.key) && active &&
-                active !== searchBar.current &&
-                !(((active as HTMLElement).isContentEditable ||
-                    ['INPUT', 'TEXTAREA', 'SELECT'].includes(active?.tagName || "")))
+            const IS_EDITABLE =  (
+                    ((active as HTMLElement).isContentEditable ||
+                    ['INPUT', 'TEXTAREA', 'SELECT'].includes(active?.tagName || ""))
+                )
+            if (
+                active && 
+                active !== searchBar.current 
+                && !IS_EDITABLE 
+                && /^[a-zA-Z0-9 ]$/.test(e.key)
             ) searchBar?.current?.focus();
 
         }
@@ -215,7 +220,7 @@ const YearPicker = ({ date, setDate }: YearPickerProps) => {
     }), []);
 
     return (<div className="yearInput tooltip-container">
-        <button className="btn-clear" onClick={()=>setDate(null)}>x</button>
+        <button className="btn-clear" onClick={() => setDate(null)}>x</button>
         <ThemeProvider theme={datePickerTheme}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -252,7 +257,7 @@ const YearPicker = ({ date, setDate }: YearPickerProps) => {
         <div className="tooltip" >Enter Release Year</div>
     </div>)
 }
-const WordMatchButton =  ({wordMatch, setWordMatch} : WordMatchProps ) => {
+const WordMatchButton = ({ wordMatch, setWordMatch }: WordMatchProps) => {
     return (
         <div className="tooltip-container">
             <button className="btn-search tooltip-sibling" onClick={() => setWordMatch(w => !w)}>
