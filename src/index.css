@@ -113,12 +113,13 @@ body {
 
 .box {
   width: 42rem;
+  height: 80vh;
   max-width: 42rem;
   background-color: var(--color-background-500);
   border: 2px solid var(--color-accent);
   /* border-image: linear-gradient(to right, #3acfd5 0%, #3a4ed5 100%) 1; */
   border-radius: 0.9rem;
-  /* overflow-y: scroll; */
+  overflow-y: scroll;
   position: relative;
 }
 
