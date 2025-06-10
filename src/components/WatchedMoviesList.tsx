@@ -2,15 +2,15 @@ import type { WatchedMovie } from "../types";
 
 import logo from '../../public/logo.png'
 
-interface WatchedMovieProps { 
-    watched: WatchedMovie[], 
-    deleteFromWatched: (i: string) => void, 
-    selectMovie: (id: string) => void 
+interface WatchedMovieProps {
+  watched: WatchedMovie[],
+  deleteFromWatched: (i: string) => void,
+  selectMovie: (id: string) => void
 }
 
 
 export function WatchedMoviesList({ watched, deleteFromWatched, selectMovie }
-  :WatchedMovieProps) {
+  : WatchedMovieProps) {
   return (
     <ul className="list list-watched ">
       {watched.map((movie) => (
@@ -35,18 +35,21 @@ function WatchedMovie({ movie, deleteFromWatched, selectMovie }: { movie: Watche
           (e.currentTarget as HTMLImageElement).src = logo;
         }}
       />
-      <h3>{movie.Title}</h3>
+      <h3 className="tooltip-sibling" onDoubleClick={() => selectMovie(movie.imdbID)}>
+        {movie.Title}
+      </h3>
+      <div className="tooltip">Double-click To Open</div>
+
 
       <div >
         <p>
           <span>⭐️</span>
           <span>{movie.imdbRating}</span>
         </p>
-        <p className="tooltip-sibling" onDoubleClick={() => selectMovie(movie.imdbID)} >
+        <p  >
           <span >🌟</span>
           <span>{movie.userRating}</span>
         </p>
-        <div className="tooltip">Double-click To Open</div>
 
         <p>
           <span>⏳</span>
