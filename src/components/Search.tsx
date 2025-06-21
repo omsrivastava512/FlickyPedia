@@ -174,16 +174,20 @@ const SearchInput = ({ query, setQuery }: SearchInputProps) => {
         const focusOnSearch = (e: KeyboardEvent) => {
             const active = document.activeElement;
 
-            const IS_EDITABLE = (
+            const ANOTHER_EDITABLE_ACTIVE = (
                 ((active as HTMLElement).isContentEditable ||
                     ['INPUT', 'TEXTAREA', 'SELECT'].includes(active?.tagName || ""))
-            )
+            );
+            const IS_VALID_FOCUS_KEY = /^[a-zA-Z0-9 ]$/.test(e.key) 
+            || (e.ctrlKey && e.key==="Backspace")
+
             if (
                 active &&
                 active !== searchBar.current
-                && !IS_EDITABLE
-                && /^[a-zA-Z0-9 ]$/.test(e.key)
+                && !ANOTHER_EDITABLE_ACTIVE
+                && IS_VALID_FOCUS_KEY
             ) searchBar?.current?.focus();
+
 
         }
         document.addEventListener("keydown", focusOnSearch)
