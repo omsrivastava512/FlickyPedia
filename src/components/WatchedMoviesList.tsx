@@ -1,6 +1,6 @@
 import type { WatchedMovie } from "../types";
 
-import logo from '../../public/logo.png'
+import logo from '/logo.png?url'
 
 interface WatchedMovieProps {
   watched: WatchedMovie[],

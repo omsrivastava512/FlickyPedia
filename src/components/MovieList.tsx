@@ -1,4 +1,4 @@
-import logo from '../../public/logo.png'
+import logo from '/logo.png?url'
 import type { Movie } from "../types";
 
 

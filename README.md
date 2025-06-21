@@ -6,11 +6,11 @@
 
 
 
-![FlickyPedia Demo](https://img.shields.io/badge/Demo-Live-brightgreen) ![React](https://img.shields.io/badge/React-18-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue) ![Vite](https://img.shields.io/badge/Vite-Latest-purple)
+[![FlickyPedia Demo](https://img.shields.io/badge/Demo-Live-brightgreen)](https://flickypedia.netlify.app/) [![React](https://img.shields.io/badge/React-18-blue)]() [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)]() [![Vite](https://img.shields.io/badge/Vite-Latest-purple)]() [![X (Twitter)](https://img.shields.io/badge/X-000?logo=x&logoColor=white)](https://x.com/notomsrivastava/status/1932534174994538516)
 
 
 ## 🛠️ Technical Highlights
-- **React Hooks**: useState, useEffect, useRef, useMemo
+- **React Hooks**: useState, useEffect, useRef, useMemo, custom hooks
 - **TypeScript**: Full type safety with custom interfaces
 - **API Integration**: RESTful API calls with error handling
 - **Performance**: Debounced search, memoization
@@ -25,7 +25,7 @@
 | **Smart Search** | Debounced input, regex validation, dual search modes | Real-time user experience without performance loss |
 | **Year Filtering** | Material-UI DatePicker integration with custom theming | Advanced filtering demonstrates complex component integration |
 | **Watchlist Management** | LocalStorage API with CRUD operations | Data persistence shows full-stack thinking |
-| **Rating System** | Custom StarRating component with event handling | Interactive UI components beyond basic forms |
+| **Rating System** | Custom StarRating component with event handling | Interactive UI components, highly customizable |
 
 
 ### ☁️**Production-Ready Architecture**
@@ -58,8 +58,8 @@
 
 ### 🎨 **User Experience**
 - **Responsive Design**: Works perfectly on desktops and tabs
-- **Dark Theme**: Easy on the eyes with Material-UI theming
-- **Keyboard Navigation**: Full keyboard support including Escape to close
+- **Dark Theme**: Easy on the eyes along with Material-UI theming
+- **Keyboard Navigation**: Full keyboard support including Escape to close and hotkeys to switch result pages
 - **Loading States**: Smooth loading indicators
 - **Error Handling**: Graceful error messages and recovery
 - **Tooltips**: Helpful hints throughout the interface
@@ -148,6 +148,7 @@ VITE_OMDB_API_KEY=your_omdb_api_key_here
 - **Type anywhere**: Focus search input
 - **Escape**: Close movie details
 - **Tab**: Navigate through interface
+- **Shift + Arrow keys** to navigate through pages
 
 ## 🛠️ Built With
 
@@ -168,19 +169,37 @@ VITE_OMDB_API_KEY=your_omdb_api_key_here
 
 ## 📁 Project Structure
 
-```
-src/
-├── App.tsx              # Main application component  # I'll split soon
-├── StarRating.tsx       # Interactive rating component
-├── TextExpander.tsx     # Expandable text component
-├── main.tsx            # Application entry point
-├── index.css           # Global styles
-├── assets/             # Static assets (icons, images)
-└── vite-env.d.ts       # TypeScript environment types
+```src/
+├── App.tsx                # Main application component
+├── index.css              # Global styles
+├── main.tsx               # Application entry point
+├── types.tsx              # TypeScript types and interfaces
+├── vite-env.d.ts          # TypeScript environment types
+├── assets/                # Static assets (icons, images)
+│   ├── react.svg
+│   ├── w2.png
+│   └── w3.png
+├── components/            # All UI components
+│   ├── Box.tsx
+│   ├── ErrorMessage.tsx
+│   ├── index.tsx
+│   ├── Loader.tsx
+│   ├── Logo.tsx
+│   ├── MovieDetails.tsx
+│   ├── MovieList.tsx
+│   ├── NavBar.tsx
+│   ├── StarRating.tsx
+│   ├── TextExpander.tsx
+│   ├── WatchedMoviesList.tsx
+│   ├── WatchedSummary.tsx
+│   └── ... (other components)
+├── hooks/                 # Custom React hooks
+│   ├── useLocalStorage.tsx
+│   └── ... (other hooks)
 
 public/
-├── logo.png            # Application logo
-└── favicon files       # Browser icons
+├── logo.png               # Application logo
+└── favicon files          # Browser icons (e.g., favicon.ico)
 ```
 
 ## 🔄 Component Architecture
@@ -194,13 +213,14 @@ App
 └── Main
     ├── Box (Movie List)
     │   ├── MovieList
-    │   └── Movie Items
+    │       └── Movie Items
     └── Box (Watchlist/Details)
         ├── MovieDetails (when selected)
         │   └── StarRating
         └── WatchedMovies (default)
             ├── WatchedSummary
             └── WatchedMoviesList
+                └── Movie Items
 ```
 
 ## 🌐 Deployment

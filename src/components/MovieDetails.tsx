@@ -5,7 +5,7 @@ import TextExpander from "./TextExpander";
 import { Loader } from "./Loader";
 import { ErrorMessage } from "./ErrorMessage";
 
-import logo from "../../public/logo.png"
+import logo from "/logo.png?url"
 
 import type { Movie, WatchedMovie } from "../types";
 
