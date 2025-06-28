@@ -82,10 +82,16 @@ export default function Search({ setMovies, setError, setLoading, setTotalResult
         let timeout: number = 0;
 
         async function fetchMovies() {
-            const queryParam = (wordMatch ? 't=' : 's=') + trimmedQuery;
+            const queryParam = (wordMatch ? 't=' : 's=') + encodeURIComponent(trimmedQuery);
             const yearParam = date instanceof dayjs ? `y=${date.year()}` : "";
-            const pageParam = page && `page=${page}`
-            const url = `https://www.omdbapi.com/?apikey=${MYKEY}&${queryParam}&${yearParam}&${pageParam}`
+            const pageParam = page > 0 ? `page=${page}` : "";
+            const params = [
+                `apikey=${MYKEY}`,
+                queryParam,
+                yearParam || null,
+                pageParam || null
+            ].filter(Boolean).join('&');
+            const url = new URL(`https://www.omdbapi.com/?${params}`)
 
             try {
                 const res = await fetch(url);
@@ -94,9 +100,11 @@ export default function Search({ setMovies, setError, setLoading, setTotalResult
                 if (data.Response == 'False') throw new Error(data.Error);
                 const searcResult = wordMatch ? [data] : data.Search
                 setMovies(searcResult);
-                setTotalResults(Number(data?.totalResults) || searcResult.length || 0)
+                const totalResults = Number(data?.totalResults) || searcResult.length
+                setTotalResults(totalResults)
             } catch (e) {
-                console.log(e);
+                console.error(e);
+                setTotalResults(0)
                 setError(e instanceof Error ? e?.message : "An unknown error occurred.")
             } finally {
                 setLoading(false)
@@ -130,15 +138,13 @@ export default function Search({ setMovies, setError, setLoading, setTotalResult
     // handle page change
     useEffect(() => {
         const pageChange = (e: KeyboardEvent) => {
-
-            if (e.shiftKey && e.key === "ArrowRight") {
-                
+            if (e.shiftKey && e.key === "ArrowRight" && !e.ctrlKey && !e.altKey) {
                 if (document.activeElement instanceof HTMLElement) {
                     document.activeElement.blur();
                 }
                 setPage(p => Math.min(MAX_PAGE, p + 1));
             }
-            if (e.shiftKey && e.key === "ArrowLeft") {
+            if (e.shiftKey && e.key === "ArrowLeft" && !e.ctrlKey && !e.altKey) {
                 if (document.activeElement instanceof HTMLElement) {
                     document.activeElement.blur();
                 }
@@ -178,8 +184,8 @@ const SearchInput = ({ query, setQuery }: SearchInputProps) => {
                 ((active as HTMLElement).isContentEditable ||
                     ['INPUT', 'TEXTAREA', 'SELECT'].includes(active?.tagName || ""))
             );
-            const IS_VALID_FOCUS_KEY = /^[a-zA-Z0-9 ]$/.test(e.key) 
-            || (e.ctrlKey && e.key==="Backspace")
+            const IS_VALID_FOCUS_KEY = /^[a-zA-Z0-9 ]$/.test(e.key)
+                || (e.ctrlKey && e.key === "Backspace")
 
             if (
                 active &&
