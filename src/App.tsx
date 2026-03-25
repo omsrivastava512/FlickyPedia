@@ -1,21 +1,23 @@
-import React from "react";
-import {  useState } from "react";
+import React, { ReactNode } from "react";
+import { useState } from "react";
 
 import type { Movie, WatchedMovie } from "./types.tsx";
 
+import gh from './assets/gh.webp'
 
-import  {
-    NoMobileView,
-    NavBar,
-    Search,
-    ErrorMessage,
-    Loader,
-    NumResults,
-    Box,
-    WatchedSummary,
-    MovieList,
-    MovieDetails,
-    WatchedMoviesList
+
+import {
+  NoMobileView,
+  NavBar,
+  Search,
+  ErrorMessage,
+  Loader,
+  NumResults,
+  Box,
+  WatchedSummary,
+  MovieList,
+  MovieDetails,
+  WatchedMoviesList
 } from "./components"
 import useLocalStorage from "./hooks/useLocalStorage.tsx";
 
@@ -24,7 +26,7 @@ export default App;
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [watched, setWatched] = useLocalStorage<WatchedMovie[]>([],'watched')
+  const [watched, setWatched] = useLocalStorage<WatchedMovie[]>([], 'watched')
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<string | null>(null);
@@ -70,6 +72,11 @@ function App() {
           <Search {...{ setMovies, setError, setLoading, setTotalResults, totalResults }} />
           <NumResults length={totalResults} />
         </NavBar>
+        <FloatingButton>
+          <a title="↗Github" target="_blank" rel="noopener" href="https://github.com/omsrivastava512/FlickyPedia">
+            <img src={gh} alt="" />
+          </a>
+        </FloatingButton>
         <Main>
           <Box>
             {error ?
@@ -107,3 +114,9 @@ function Main({ children }: { children: React.ReactNode }) {
 }
 
 
+
+const FloatingButton = ({ children }: { children: ReactNode }) => (
+  <button className="floating-btn" type="button" aria-label="Toggle Theme">
+    {children}
+  </button>
+)
