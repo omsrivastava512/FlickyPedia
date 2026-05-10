@@ -78,12 +78,12 @@ function App() {
           </a>
         </FloatingButton>
         <Main>
-          <Box>
+          <Box isList>
             {error ?
               <ErrorMessage message={error} /> :
               loading ?
                 <Loader /> :
-                <MovieList movies={movies} selectMovie={handleMovieSelection} />}
+                <MovieList movies={movies} selectMovie={handleMovieSelection} totalResults={totalResults} />}
           </Box>
 
           <Box>

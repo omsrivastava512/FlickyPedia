@@ -2,7 +2,7 @@ import logo from '/logo.png?url'
 import type { Movie } from "../types";
 
 
-export function MovieList({ movies, selectMovie }: { movies: Movie[], selectMovie: (id: string) => void }) {
+export function MovieList({ movies, selectMovie, totalResults }: { movies: Movie[], selectMovie: (id: string) => void; totalResults:number}) {
   return (
     <ul className="list list-movies">
       {movies?.map((movie) => (
@@ -13,11 +13,11 @@ export function MovieList({ movies, selectMovie }: { movies: Movie[], selectMovi
         />
       ))}
       <div className="navigation-hint">
-        {movies.length > 10 ? <p>💡 Use Shift +  → to navigate between pages</p> : <p>End of List</p>}
+        {totalResults > 10 ? <p>💡 Use Shift +  → to navigate between pages</p> : <p>End of List</p>}
       </div>
 
     </ul>
-    
+
   );
 }
 
